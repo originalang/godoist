@@ -13,4 +13,6 @@
 
 # Configuration file
 config
-scratch.go
+
+# scratch folder
+scratch/
