@@ -16,28 +16,38 @@ func NewUser(apiKey string) *User {
 	return &User{apiKey}
 }
 
-func (u *User) Projects() []Project {
+func request(method, urlAppend, apiKey string) *http.Response {
 
 	client := &http.Client{}
 
-	req, _ := http.NewRequest("GET", BaseREST+"projects", nil)
-	req.Header.Set("Authorization", "Bearer "+u.APIKey)
+	req, e := http.NewRequest(method, BaseREST+urlAppend, nil)
+	checkErr(e)
+
+	switch method {
+	case "GET":
+		req.Header.Set("Authorization", "Bearer "+apiKey)
+	}
 
 	resp, e := client.Do(req)
-	err(e)
+	checkErr(e)
 
+	return resp
+}
+
+func (u *User) Projects() []Project {
+	resp := request("GET", "projects", u.APIKey)
 	defer resp.Body.Close()
 
 	contents, e := ioutil.ReadAll(resp.Body)
-	err(e)
+	checkErr(e)
 
-	p := make([]Project, 0)
-	json.Unmarshal(contents, &p)
+	pList := make([]Project, 0)
+	json.Unmarshal(contents, &pList)
 
-	return p
+	return pList
 }
 
-func err(e error) {
+func checkErr(e error) {
 	if e != nil {
 		panic(e)
 	}
