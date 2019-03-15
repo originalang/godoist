@@ -34,12 +34,18 @@ func request(method, urlAppend, apiKey string) *http.Response {
 	return resp
 }
 
+func readResponse(resp *http.Response) []byte {
+	contents, e := ioutil.ReadAll(resp.Body)
+	checkErr(e)
+
+	return contents
+}
+
 func (u *User) Projects() []Project {
 	resp := request("GET", "projects", u.APIKey)
 	defer resp.Body.Close()
 
-	contents, e := ioutil.ReadAll(resp.Body)
-	checkErr(e)
+	contents := readResponse(resp)
 
 	pList := make([]Project, 0)
 	json.Unmarshal(contents, &pList)
