@@ -2,8 +2,6 @@ package togoist
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 )
 
 const BaseREST string = "https://beta.todoist.com/API/v8/"
@@ -16,31 +14,6 @@ func NewUser(apiKey string) *User {
 	return &User{apiKey}
 }
 
-func request(method, urlAppend, apiKey string) *http.Response {
-
-	client := &http.Client{}
-
-	req, e := http.NewRequest(method, BaseREST+urlAppend, nil)
-	checkErr(e)
-
-	switch method {
-	case "GET":
-		req.Header.Set("Authorization", "Bearer "+apiKey)
-	}
-
-	resp, e := client.Do(req)
-	checkErr(e)
-
-	return resp
-}
-
-func readResponse(resp *http.Response) []byte {
-	contents, e := ioutil.ReadAll(resp.Body)
-	checkErr(e)
-
-	return contents
-}
-
 func (u *User) Projects() []Project {
 	resp := request("GET", "projects", u.APIKey)
 	defer resp.Body.Close()
@@ -51,10 +24,4 @@ func (u *User) Projects() []Project {
 	json.Unmarshal(contents, &pList)
 
 	return pList
-}
-
-func checkErr(e error) {
-	if e != nil {
-		panic(e)
-	}
 }
