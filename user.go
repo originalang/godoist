@@ -64,3 +64,24 @@ func (u *User) Tasks() []Task {
 
 	return tList
 }
+
+func (u *User) AddTask(content, due string, priority ...int) Task {
+
+	// set priority based on input
+	prty := 1
+	if len(priority) > 0 {
+		prty = priority[0]
+	}
+
+	task := fmt.Sprintf(`{"content":"%s", "due_string":"%s", "priority":%d}`, content, due, prty)
+
+	resp := request("POST", "tasks", u.APIKey, task)
+	defer resp.Body.Close()
+
+	contents := readResponse(resp)
+
+	var t Task
+	json.Unmarshal(contents, &t)
+
+	return t
+}
