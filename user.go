@@ -47,3 +47,8 @@ func (u *User) AddProject(name string) Project {
 func (u *User) DeleteProject(project Project) {
 	request("DELETE", fmt.Sprintf("projects/%d", project.Id), u.APIKey)
 }
+
+func (u *User) UpdateProject(project Project) {
+	updatedProj := fmt.Sprintf(`{"name":"%s"}`, project.Name)
+	request("POST", fmt.Sprintf("projects/%d", project.Id), u.APIKey, updatedProj)
+}
