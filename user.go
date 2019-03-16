@@ -43,3 +43,7 @@ func (u *User) AddProject(name string) Project {
 
 	return p
 }
+
+func (u *User) DeleteProject(project Project) {
+	request("DELETE", fmt.Sprintf("projects/%d", project.Id), u.APIKey)
+}
