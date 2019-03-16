@@ -52,3 +52,15 @@ func (u *User) UpdateProject(project Project) {
 	updatedProj := fmt.Sprintf(`{"name":"%s"}`, project.Name)
 	request("POST", fmt.Sprintf("projects/%d", project.Id), u.APIKey, updatedProj)
 }
+
+func (u *User) Tasks() []Task {
+	resp := request("GET", "tasks", u.APIKey)
+	defer resp.Body.Close()
+
+	contents := readResponse(resp)
+
+	tList := make([]Task, 0)
+	json.Unmarshal(contents, &tList)
+
+	return tList
+}
