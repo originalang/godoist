@@ -9,16 +9,18 @@ import (
 const endpoint string = "https://todoist.com/api/v7/sync"
 
 type Client struct {
-	HTTPClient *http.Client
-	Token      string
-	SyncToken  string
+	HTTPClient    *http.Client
+	Token         string
+	SyncToken     string
+	ResourceTypes string
 }
 
 func NewClient(token string) *Client {
 	return &Client{
-		HTTPClient: &http.Client{},
-		Token:      token,
-		SyncToken:  "*",
+		HTTPClient:    &http.Client{},
+		Token:         token,
+		SyncToken:     "*",
+		ResourceTypes: `"projects"`,
 	}
 }
 
@@ -34,5 +36,9 @@ func (c *Client) NewRequest(method, urlPath string) *http.Response {
 }
 
 func (c *Client) encodeBody() *strings.Reader {
-	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=["projects"]`, c.Token, c.SyncToken))
+	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=[%s]`, c.Token, c.SyncToken, c.ResourceTypes))
+}
+
+func (c *Client) setResourceTypes(resources string) {
+	c.ResourceTypes = resources
 }
