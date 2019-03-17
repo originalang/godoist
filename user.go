@@ -45,12 +45,14 @@ func (u *User) AddProject(name string) Project {
 }
 
 func (u *User) DeleteProject(project Project) {
-	request("DELETE", fmt.Sprintf("projects/%d", project.Id), u.APIKey)
+	resp := request("DELETE", fmt.Sprintf("projects/%d", project.Id), u.APIKey)
+	defer resp.Body.Close()
 }
 
 func (u *User) UpdateProject(project Project) {
 	updatedProj := fmt.Sprintf(`{"name":"%s"}`, project.Name)
-	request("POST", fmt.Sprintf("projects/%d", project.Id), u.APIKey, updatedProj)
+	resp := request("POST", fmt.Sprintf("projects/%d", project.Id), u.APIKey, updatedProj)
+	defer resp.Body.Close()
 }
 
 func (u *User) Tasks() []Task {
