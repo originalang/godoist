@@ -1,11 +1,5 @@
 package togoist
 
-type Projects struct {
-	SyncToken string    `json:"sync_token"`
-	FullSync  bool      `json:"full_sync"`
-	List      []Project `json:"projects"`
-}
-
 type Project struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
