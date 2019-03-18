@@ -15,6 +15,7 @@ type Client struct {
 	Token         string
 	SyncToken     string
 	ResourceTypes string
+	Commands      []string
 }
 
 func NewClient(token string) *Client {
@@ -38,7 +39,7 @@ func (c *Client) request() *http.Response {
 }
 
 func (c *Client) encodeBody() *strings.Reader {
-	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=[%s]`, c.Token, c.SyncToken, c.ResourceTypes))
+	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=[%s]&commands=[%s]`, c.Token, c.SyncToken, c.ResourceTypes, strings.Join(c.Commands, ", ")))
 }
 
 func (c *Client) decodeResponse(resp *http.Response) map[string]interface{} {
@@ -52,8 +53,9 @@ func (c *Client) decodeResponse(resp *http.Response) map[string]interface{} {
 	return decoded
 }
 
-func (c *Client) setResourceTypes(resources string) {
+func (c *Client) setAttributes(resources string, commands []string) {
 	c.ResourceTypes = resources
+	c.Commands = commands
 }
 
 func (c *Client) Projects() interface{} {
@@ -61,7 +63,20 @@ func (c *Client) Projects() interface{} {
 
 	defer r.Body.Close()
 
-	a := c.decodeResponse(r)
+	d := c.decodeResponse(r)
 
-	return a["projects"]
+	return d["projects"]
+}
+
+func (c *Client) AddProject(name string, indent int) interface{} {
+	cmd := NewCommand("project_add", map[string]interface{}{"name": name, "indent": indent})
+	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
+	r := c.request()
+
+	defer r.Body.Close()
+
+	d := c.decodeResponse(r)
+
+	return d["projects"]
+
 }
