@@ -1,7 +1,7 @@
 package togoist
 
 type Project struct {
-	Id         int    `json:"id"`
+	Id         int64  `json:"id"`
 	Name       string `json:"name"`
 	Color      int    `json:"color"`
 	Indent     int    `json:"indent"`
