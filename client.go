@@ -95,3 +95,10 @@ func (c *Client) UpdateProject(p Project) Project {
 
 	return resp.Projects[0]
 }
+
+func (c *Client) DeleteProjects(ids []int64) {
+	cmd := NewCommand("project_delete", map[string]interface{}{"ids": ids})
+	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
+
+	c.performRequest()
+}
