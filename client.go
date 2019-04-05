@@ -102,3 +102,17 @@ func (c *Client) DeleteProjects(ids []int64) {
 
 	c.performRequest()
 }
+
+func (c *Client) ArchiveProjects(ids []int64) {
+	cmd := NewCommand("project_archive", map[string]interface{}{"ids": ids})
+	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
+
+	c.performRequest()
+}
+
+func (c *Client) UnarchiveProjects(ids []int64) {
+	cmd := NewCommand("project_unarchive", map[string]interface{}{"ids": ids})
+	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
+
+	c.performRequest()
+}
