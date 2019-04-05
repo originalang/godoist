@@ -57,6 +57,18 @@ func (c *Client) request() *http.Response {
 	return resp
 }
 
+func (c *Client) performRequest() Response {
+	r := c.request()
+	defer r.Body.Close()
+
+	d := decodeResponse(r)
+
+	// update the sync token on the client
+	c.SyncToken = d.SyncToken
+
+	return d
+}
+
 func (c *Client) encodeBody() *strings.Reader {
 	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=[%s]&commands=[%s]`, c.Token, c.SyncToken, c.ResourceTypes, strings.Join(c.Commands, ", ")))
 }
@@ -70,13 +82,16 @@ func (c *Client) AddProject(name string, indent int) Project {
 	cmd := NewCommand("project_add", map[string]interface{}{"name": name, "indent": indent})
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
 
-	r := c.request()
-	defer r.Body.Close()
+	resp := c.performRequest()
 
-	resp := decodeResponse(r)
+	return resp.Projects[0]
+}
 
-	// update the sync token on the client
-	c.SyncToken = resp.SyncToken
+func (c *Client) UpdateProject(p Project) Project {
+	cmd := NewCommand("project_update", projectToMap(&p))
+	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
+
+	resp := c.performRequest()
 
 	return resp.Projects[0]
 }
