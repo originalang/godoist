@@ -11,7 +11,7 @@ type Item struct {
 	DateString        string `json:"date_string"`
 	DayOrder          int    `json:"day_order"`
 	DueDate           string `json:"due_date_utc"`
-	ID                int64  `json:"id"`
+	Id                int64  `json:"id"`
 	InHistory         bool   `json:"in_history"`
 	Indent            int    `json:"indent"`
 	IsArchived        bool   `json:"is_archived"`
