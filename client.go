@@ -50,10 +50,12 @@ func (c *Client) request() *http.Response {
 
 	body := c.encodeBody()
 
-	req, _ := http.NewRequest("POST", endpoint, body)
+	req, err := http.NewRequest("POST", endpoint, body)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	checkErr(err)
 
-	resp, _ := c.HTTPClient.Do(req)
+	resp, err := c.HTTPClient.Do(req)
+	checkErr(err)
 	return resp
 }
 
@@ -122,6 +124,16 @@ func (c *Client) AddItem(projectId int64, content string, indent int) Item {
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
 
 	resp := c.performRequest()
+
+	return resp.Items[0]
+}
+
+func (c *Client) UpdateItem(item Item) Item {
+	fmt.Printf("%+v", itemToMap(&item))
+	cmd := NewCommand("item_update", itemToMap(&item))
+	c.setAttributes(`"items"`, []string{cmd.Stringify()})
+
+	c.performRequest()
 
 	return resp.Items[0]
 }
