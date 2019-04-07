@@ -133,7 +133,14 @@ func (c *Client) UpdateItem(item Item) Item {
 	cmd := NewCommand("item_update", itemToMap(&item))
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
 
-	c.performRequest()
+	resp := c.performRequest()
 
 	return resp.Items[0]
+}
+
+func (c *Client) DeleteItems(ids []int64) {
+	cmd := NewCommand("item_delete", map[string]interface{}{"ids": ids})
+	c.setAttributes(`"items"`, []string{cmd.Stringify()})
+
+	c.performRequest()
 }
