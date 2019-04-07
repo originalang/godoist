@@ -151,3 +151,10 @@ func (c *Client) CompleteItems(ids []int64) {
 
 	c.performRequest()
 }
+
+func (c *Client) UncompleteItems(ids []int64) {
+	cmd := NewCommand("item_complete", map[string]interface{}{"ids": ids})
+	c.setAttributes(`"items"`, []string{cmd.Stringify()})
+
+	c.performRequest()
+}
