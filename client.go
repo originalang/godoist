@@ -116,3 +116,12 @@ func (c *Client) UnarchiveProjects(ids []int64) {
 
 	c.performRequest()
 }
+
+func (c *Client) AddItem(projectId int64, content string, indent int) Item {
+	cmd := NewCommand("item_add", map[string]interface{}{"project_id": projectId, "content": content, "indent": indent})
+	c.setAttributes(`"items"`, []string{cmd.Stringify()})
+
+	resp := c.performRequest()
+
+	return resp.Items[0]
+}
