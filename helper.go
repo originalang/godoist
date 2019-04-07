@@ -27,3 +27,17 @@ func projectToMap(p *Project) map[string]interface{} {
 
 	return newMap
 }
+
+func itemToMap(item *Item) map[string]interface{} {
+	proj, _ := json.Marshal(item)
+
+	var newMap map[string]interface{}
+	json.Unmarshal(proj, &newMap)
+
+	// the unmarshaling process does not parse the id field correctly
+	// this is done to preserve the correct id for the project
+	newMap["id"] = item.Id
+	newMap["project_id"] = item.ProjectId
+
+	return newMap
+}
