@@ -15,7 +15,7 @@ type Client struct {
 	ResourceTypes string
 	Commands      []string
 	User          User
-	Projects      []Project
+	Projects      map[string]Project
 	Items         []Item
 }
 
@@ -42,7 +42,13 @@ func (c *Client) Sync() {
 
 	// Perform sync
 	c.User = resp.User
-	c.Projects = resp.Projects
+
+	// map projects to a key-value pair
+	projectMap := make(map[string]Project)
+	for _, proj := range resp.Projects {
+		projectMap[proj.Name] = proj
+	}
+	c.Projects = projectMap
 	c.Items = resp.Items
 }
 
