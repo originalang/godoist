@@ -129,8 +129,8 @@ func (c *Client) UnarchiveProjects(ids []int64) {
 	c.performRequest()
 }
 
-func (c *Client) AddItem(projectId int64, content string, indent int) Item {
-	cmd := NewCommand("item_add", map[string]interface{}{"project_id": projectId, "content": content, "indent": indent})
+func (c *Client) AddItem(projectId int64, content string, indent int, dueDate string) Item {
+	cmd := NewCommand("item_add", map[string]interface{}{"project_id": projectId, "content": content, "indent": indent, "date_string": dueDate})
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
 
 	resp := c.performRequest()
