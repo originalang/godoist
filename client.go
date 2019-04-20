@@ -1,6 +1,7 @@
 package togoist
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -163,4 +164,17 @@ func (c *Client) UncompleteItems(ids []int64) {
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
 
 	c.performRequest()
+}
+
+// non-modifying functions
+
+// retrieve a project's id by name
+func GetProjectId(c *Client, name string) (int64, error) {
+	proj, ok := c.Projects[name]
+
+	if ok {
+		return proj.Id, nil
+	} else {
+		return 0, errors.New("Project does not exist")
+	}
 }
