@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -50,7 +51,9 @@ func (c *Client) Sync() {
 		projectMap[proj.Name] = proj
 	}
 	c.Projects = projectMap
+
 	c.Items = resp.Items
+	sort.SliceStable(c.Items, func(i, j int) bool { return c.Items[i].ItemOrder < c.Items[j].ItemOrder })
 }
 
 func (c *Client) request() *http.Response {
