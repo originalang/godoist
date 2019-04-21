@@ -27,13 +27,13 @@ import (
 )
 
 func main() {
-  # replace this with your personal token
+  // replace this with your personal token
   token := "YOUR_API_TOKEN"
 
-  # initialie the client
+  // initialie the client
   client := togoist.NewClient(token)
 
-  # use the sync method to retrieve user, project, and item information
+  // use the sync method to retrieve user, project, and item information
   client.Sync()
 }
 ```
