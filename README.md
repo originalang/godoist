@@ -37,3 +37,17 @@ func main() {
   client.Sync()
 }
 ```
+
+After this initial setup, you can refer to fields on the client struct to retrieve key information:
+
+```go
+// loop through all projects
+for _, proj := range client.Projects {
+  fmt.Println(proj.Name)
+}
+
+// loop through items
+for _, itm := range client.Items {
+  fmt.Printf("%v -- %s", itm.Id, itm.Content)
+}
+```
