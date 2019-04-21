@@ -155,8 +155,13 @@ func (c *Client) DeleteItems(ids []int64) {
 	c.performRequest()
 }
 
-func (c *Client) CompleteItems(ids []int64) {
-	cmd := NewCommand("item_complete", map[string]interface{}{"ids": ids})
+func (c *Client) CompleteItems(ids []int64, toHistory bool) {
+	var cmd *Command
+	if toHistory {
+		cmd = NewCommand("item_complete", map[string]interface{}{"ids": ids, "force_history": 1})
+	} else {
+		cmd = NewCommand("item_complete", map[string]interface{}{"ids": ids})
+	}
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
 
 	c.performRequest()
@@ -180,4 +185,16 @@ func GetProjectId(c *Client, name string) (int64, error) {
 	} else {
 		return 0, errors.New("Project does not exist")
 	}
+}
+
+func GetChildrenIds(c *Client, parentId int64) []int64 {
+	var children []int64
+
+	for _, itm := range c.Items {
+		if itm.ParentId == parentId {
+			children = append(children, itm.Id)
+		}
+	}
+
+	return children
 }
