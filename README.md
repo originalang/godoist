@@ -30,7 +30,7 @@ func main() {
   // replace this with your personal token
   token := "YOUR_API_TOKEN"
 
-  // initialie the client
+  // initialize the client
   client := togoist.NewClient(token)
 
   // use the sync method to retrieve user, project, and item information
