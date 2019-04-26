@@ -12,6 +12,7 @@ type Command struct {
 	Args   map[string]interface{} `json:"args"`
 }
 
+// initialize and return a new Commnad struct
 func NewCommand(cmdType string, args map[string]interface{}) *Command {
 	return &Command{
 		Type:   cmdType,
@@ -21,6 +22,7 @@ func NewCommand(cmdType string, args map[string]interface{}) *Command {
 	}
 }
 
+// convert a command struct to a string representation
 func (cmd *Command) Stringify() string {
 	str, _ := json.Marshal(cmd)
 	return string(str)

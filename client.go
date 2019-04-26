@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// the API endpoint
 const endpoint string = "https://todoist.com/api/v7/sync"
 
 type Client struct {
@@ -21,6 +22,7 @@ type Client struct {
 	Items         []Item
 }
 
+// initialize and return a new client struct
 func NewClient(token string) *Client {
 	return &Client{
 		HTTPClient:    &http.Client{},
@@ -30,6 +32,8 @@ func NewClient(token string) *Client {
 	}
 }
 
+// sync all projects, items, and user information
+// with the associated client struct
 func (c *Client) Sync() {
 	c.ResourceTypes = `"all"`
 	c.SyncToken = "*"
@@ -53,9 +57,12 @@ func (c *Client) Sync() {
 	c.Projects = projectMap
 
 	c.Items = resp.Items
+
+	// sort the items by the item order that is received through the API call
 	sort.SliceStable(c.Items, func(i, j int) bool { return c.Items[i].ItemOrder < c.Items[j].ItemOrder })
 }
 
+// perform a request and return the response
 func (c *Client) request() *http.Response {
 
 	body := c.encodeBody()
@@ -69,6 +76,8 @@ func (c *Client) request() *http.Response {
 	return resp
 }
 
+// the actual steps to performing the request, decode
+// the response and return the decoded response
 func (c *Client) performRequest() Response {
 	r := c.request()
 	defer r.Body.Close()
@@ -81,15 +90,20 @@ func (c *Client) performRequest() Response {
 	return d
 }
 
+// a helper function to encode the body that is submitted
+// through the API request
 func (c *Client) encodeBody() *strings.Reader {
 	return strings.NewReader(fmt.Sprintf(`token=%s&sync_token=%s&resource_types=[%s]&commands=[%s]`, c.Token, c.SyncToken, c.ResourceTypes, strings.Join(c.Commands, ", ")))
 }
 
+// a helper function to set specific attributes on the client
+// these attributes are used to perform the request
 func (c *Client) setAttributes(resources string, commands []string) {
 	c.ResourceTypes = resources
 	c.Commands = commands
 }
 
+// add a new project to todoist
 func (c *Client) AddProject(name string, indent int) Project {
 	cmd := NewCommand("project_add", map[string]interface{}{"name": name, "indent": indent})
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
@@ -99,6 +113,7 @@ func (c *Client) AddProject(name string, indent int) Project {
 	return resp.Projects[0]
 }
 
+// update a project in todoist
 func (c *Client) UpdateProject(p Project) Project {
 	cmd := NewCommand("project_update", projectToMap(&p))
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
@@ -108,6 +123,7 @@ func (c *Client) UpdateProject(p Project) Project {
 	return resp.Projects[0]
 }
 
+// delete a specified project from todoist
 func (c *Client) DeleteProjects(ids []int64) {
 	cmd := NewCommand("project_delete", map[string]interface{}{"ids": ids})
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
@@ -115,6 +131,7 @@ func (c *Client) DeleteProjects(ids []int64) {
 	c.performRequest()
 }
 
+// archive a specified project in todoist
 func (c *Client) ArchiveProjects(ids []int64) {
 	cmd := NewCommand("project_archive", map[string]interface{}{"ids": ids})
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
@@ -122,6 +139,7 @@ func (c *Client) ArchiveProjects(ids []int64) {
 	c.performRequest()
 }
 
+// unarchive a specified project in todoist
 func (c *Client) UnarchiveProjects(ids []int64) {
 	cmd := NewCommand("project_unarchive", map[string]interface{}{"ids": ids})
 	c.setAttributes(`"projects"`, []string{cmd.Stringify()})
@@ -129,6 +147,7 @@ func (c *Client) UnarchiveProjects(ids []int64) {
 	c.performRequest()
 }
 
+// add a new item to a specified project
 func (c *Client) AddItem(projectId int64, content string, indent int, dueDate string) Item {
 	cmd := NewCommand("item_add", map[string]interface{}{"project_id": projectId, "content": content, "indent": indent, "date_string": dueDate})
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
@@ -138,6 +157,7 @@ func (c *Client) AddItem(projectId int64, content string, indent int, dueDate st
 	return resp.Items[0]
 }
 
+// update a specified item
 func (c *Client) UpdateItem(item Item) Item {
 	fmt.Printf("%+v", itemToMap(&item))
 	cmd := NewCommand("item_update", itemToMap(&item))
@@ -148,6 +168,7 @@ func (c *Client) UpdateItem(item Item) Item {
 	return resp.Items[0]
 }
 
+// delete a specified item
 func (c *Client) DeleteItems(ids []int64) {
 	cmd := NewCommand("item_delete", map[string]interface{}{"ids": ids})
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
@@ -155,6 +176,7 @@ func (c *Client) DeleteItems(ids []int64) {
 	c.performRequest()
 }
 
+// complete/check a specified item
 func (c *Client) CompleteItems(ids []int64, toHistory bool) {
 	var cmd *Command
 	if toHistory {
@@ -167,6 +189,7 @@ func (c *Client) CompleteItems(ids []int64, toHistory bool) {
 	c.performRequest()
 }
 
+// uncomplete/uncheck an item
 func (c *Client) UncompleteItems(ids []int64) {
 	cmd := NewCommand("item_complete", map[string]interface{}{"ids": ids})
 	c.setAttributes(`"items"`, []string{cmd.Stringify()})
@@ -187,6 +210,7 @@ func GetProjectId(c *Client, name string) (int64, error) {
 	}
 }
 
+// check if child items exists, and return their ids
 func GetChildrenIds(c *Client, parentId int64) []int64 {
 	var children []int64
 

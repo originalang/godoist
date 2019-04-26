@@ -7,12 +7,16 @@ import (
 	"net/http"
 )
 
+// test returned errors, and print 
+// the error out if it exists
 func checkErr(e error) {
 	if e != nil {
 		fmt.Println(e)
 	}
 }
 
+// decode an http response by unmarshalling it
+// into the Response struct
 func decodeResponse(resp *http.Response) Response {
 	content, _ := ioutil.ReadAll(resp.Body)
 
@@ -22,6 +26,7 @@ func decodeResponse(resp *http.Response) Response {
 	return decoded
 }
 
+// convert a project struct to a map
 func projectToMap(p *Project) map[string]interface{} {
 	proj, _ := json.Marshal(p)
 
@@ -35,6 +40,7 @@ func projectToMap(p *Project) map[string]interface{} {
 	return newMap
 }
 
+// convert an item struct to a map
 func itemToMap(item *Item) map[string]interface{} {
 	proj, _ := json.Marshal(item)
 
