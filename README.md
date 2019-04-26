@@ -51,3 +51,45 @@ for _, itm := range client.Items {
   fmt.Printf("%v -- %s", itm.Id, itm.Content)
 }
 ```
+
+The following fields are available on the ```Project``` struct:
+
+```go
+Id         int64
+Name       string
+Color      int
+Indent     int
+Order      int
+Collapsed  int
+Shared     bool
+IsDeleted  int
+IsArchived int
+IsFavorite int
+```
+
+The following fields are available on the ```Item``` struct:
+
+```go
+AllDay            bool
+AssignedBy        int64
+Checked           int
+Collapsed         int
+Content           string
+DateAdded         string
+DateCompleted     string
+DateString        string
+DayOrder          int
+DueDate           string
+Id                int64
+InHistory         int
+Indent            int
+IsArchived        int
+IsDeleted         int
+ItemOrder         int
+ParentId          int64
+Priority          int
+ProjectId         int64
+ResponsibleUserId int64
+SyncId            string
+UserId            int64
+```
