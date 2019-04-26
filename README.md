@@ -93,3 +93,23 @@ ResponsibleUserId int64
 SyncId            string
 UserId            int64
 ```
+
+Use these functions to interact with the todoist API:
+
+```go
+// methods
+client.AddProject(name string, indent int)
+client.UpdateProject(p Project)
+client.DeleteProjects(ids []int64)
+client.ArchiveProjects(ids []int64)
+client.UnarchiveProjects(ids []int64)
+client.AddItem(projectId int64, content string, indent int, dueDate string)
+client.UpdateItem(item Item)
+client.DeleteItems(ids []int64)
+client.CompleteItems(ids []int64, toHistory bool)
+client.UncompleteItems(ids []int64)
+
+// functions
+GetProjectId(c *Client, name string)
+GetChildrenIds(c *Client, parentId int64)
+```
